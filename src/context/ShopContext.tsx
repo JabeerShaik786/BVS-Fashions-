@@ -1,6 +1,8 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import type { Product, CartItem, CategoryId, ProductColor, ProductTab, ToastMessage } from '../types';
 import { MOCK_PRODUCTS } from '../data/products';
+import { getApiBaseUrl } from '../admin/adminApi';
+import { supabase, isClientSupabaseConfigured } from '../supabase';
 
 interface ShopContextType {
   products: Product[];
@@ -57,7 +59,53 @@ interface ShopContextType {
 
 export const ShopContext = createContext<ShopContextType | undefined>(undefined);
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+function mapDbProductToProduct(item: any): Product {
+  const regularPrice = Number(item.regular_price);
+  const salePrice = item.sale_price ? Number(item.sale_price) : undefined;
+  const activePrice = salePrice || regularPrice;
+  const discount =
+    salePrice && regularPrice > salePrice
+      ? Math.round((1 - salePrice / regularPrice) * 100)
+      : undefined;
+
+  const imagesList =
+    Array.isArray(item.images) && item.images.length > 0
+      ? item.images
+      : ['https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80'];
+
+  return {
+    id: String(item.id),
+    sku: item.sku,
+    name: item.name,
+    category: item.category_id as CategoryId,
+    categoryLabel:
+      item.category_id === 'sarees'
+        ? 'Sarees'
+        : item.category_id === 'womens-ethnic'
+        ? "Women's Wear"
+        : item.category_id === 'mens-wear'
+        ? "Men's Wear"
+        : item.category_id === 'kids-wear'
+        ? "Kids' Wear"
+        : 'Festive & Wedding',
+    price: activePrice,
+    originalPrice: salePrice ? regularPrice : undefined,
+    discountPercent: discount,
+    image: imagesList[0],
+    secondaryImage: imagesList[1],
+    images: imagesList,
+    colors: Array.isArray(item.colors) ? item.colors : [],
+    sizes: Array.isArray(item.sizes) ? item.sizes : ['Standard'],
+    fabric: item.fabric || 'Authentic Handloom Weave',
+    occasion: item.occasion || 'Festivals & Celebrations',
+    description: item.description,
+    availability_status: item.availability_status || 'in_stock',
+    is_published: item.is_published,
+    isNewArrival: Boolean(item.is_new_arrival),
+    isBestseller: Boolean(item.is_bestseller),
+    isFestive: Boolean(item.is_festive),
+  };
+}
 
 export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [products, setProducts] = useState<Product[]>(MOCK_PRODUCTS);
@@ -96,65 +144,41 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  // Fetch published products from the real database API
+  // Fetch published products from real persistent database or live API
   const refreshProducts = useCallback(async () => {
     try {
       setLoadingProducts(true);
-      const res = await fetch(`${API_BASE}/products`);
-      if (!res.ok) throw new Error('API fetch failed');
-      const data = await res.json();
-      
-      if (data.success && Array.isArray(data.products) && data.products.length > 0) {
-        // Map database product fields to frontend model
-        const mappedProducts: Product[] = data.products.map((item: any) => {
-          const regularPrice = Number(item.regular_price);
-          const salePrice = item.sale_price ? Number(item.sale_price) : undefined;
-          const activePrice = salePrice || regularPrice;
-          const discount = salePrice && regularPrice > salePrice
-            ? Math.round((1 - salePrice / regularPrice) * 100)
-            : undefined;
 
-          const imagesList = Array.isArray(item.images) && item.images.length > 0
-            ? item.images
-            : ['https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80'];
+      // Strategy A: Direct Supabase client query (ideal for GitHub Pages serverless static hosting)
+      if (isClientSupabaseConfigured && supabase) {
+        const { data, error } = await supabase
+          .from('products')
+          .select('*')
+          .eq('is_published', true)
+          .order('created_at', { ascending: false });
 
-          return {
-            id: item.id,
-            sku: item.sku,
-            name: item.name,
-            category: item.category_id as CategoryId,
-            categoryLabel: item.category_id === 'sarees'
-              ? 'Sarees'
-              : item.category_id === 'womens-ethnic'
-              ? "Women's Wear"
-              : item.category_id === 'mens-wear'
-              ? "Men's Wear"
-              : item.category_id === 'kids-wear'
-              ? "Kids' Wear"
-              : 'Festive & Wedding',
-            price: activePrice,
-            originalPrice: salePrice ? regularPrice : undefined,
-            discountPercent: discount,
-            image: imagesList[0],
-            secondaryImage: imagesList[1],
-            images: imagesList,
-            colors: Array.isArray(item.colors) ? item.colors : [],
-            sizes: Array.isArray(item.sizes) ? item.sizes : ['Standard'],
-            fabric: item.fabric || 'Authentic Handloom Weave',
-            occasion: item.occasion || 'Festivals & Celebrations',
-            description: item.description,
-            availability_status: item.availability_status || 'in_stock',
-            is_published: item.is_published,
-            isNewArrival: Boolean(item.is_new_arrival),
-            isBestseller: Boolean(item.is_bestseller),
-            isFestive: Boolean(item.is_festive),
-          };
-        });
-
-        setProducts(mappedProducts);
+        if (!error && Array.isArray(data) && data.length > 0) {
+          setProducts(data.map(mapDbProductToProduct));
+          return;
+        }
       }
+
+      // Strategy B: Deployed Express API (or localhost only during local development)
+      const apiBase = getApiBaseUrl();
+      if (apiBase) {
+        const res = await fetch(`${apiBase}/products`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && Array.isArray(data.products) && data.products.length > 0) {
+            setProducts(data.products.map(mapDbProductToProduct));
+            return;
+          }
+        }
+      }
+
+      // Strategy C: If remote database is not configured yet, use mock products without making failing network calls
     } catch {
-      // Gracefully retains mock products if server is connecting or offline
+      // Gracefully retain current products if offline
     } finally {
       setLoadingProducts(false);
     }

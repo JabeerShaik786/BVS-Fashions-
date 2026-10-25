@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { adminApi, isCurrentHostLocal } from './adminApi';
+import { adminApi, isCurrentHostLocal, getApiBaseUrl } from './adminApi';
 import { isClientSupabaseConfigured } from '../supabase';
-import { Lock, Mail, ArrowRight, AlertCircle, ArrowLeft, ShieldCheck, HelpCircle } from 'lucide-react';
+import { Lock, Mail, ArrowRight, AlertCircle, ArrowLeft, ShieldCheck, HelpCircle, Database } from 'lucide-react';
 
 interface AdminLoginProps {
   onLoginSuccess: () => void;
@@ -45,6 +45,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackTo
   };
 
   const isLocal = isCurrentHostLocal();
+  const isConfigured = isClientSupabaseConfigured || Boolean(getApiBaseUrl());
 
   return (
     <div className="min-h-screen bg-[#FAF6EE] flex flex-col justify-center py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
@@ -87,6 +88,29 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackTo
             </p>
           </div>
 
+          {/* Setup Requirement Notice for Unconfigured Production Deployments */}
+          {!isLocal && !isConfigured && !error && (
+            <div className="mb-5 p-3.5 rounded-xl bg-amber-50/90 border border-amber-200 text-xs text-amber-900 leading-relaxed">
+              <div className="flex items-start gap-2.5">
+                <Database className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-amber-950">Cloud Database Required</p>
+                  <p className="mt-0.5 text-amber-800 text-[11px]">
+                    To sign in on GitHub Pages, configure your Supabase credentials (<code className="bg-amber-100/80 px-1 py-0.5 rounded text-[10px]">VITE_SUPABASE_URL</code> and <code className="bg-amber-100/80 px-1 py-0.5 rounded text-[10px]">VITE_SUPABASE_ANON_KEY</code>) or backend URL (<code className="bg-amber-100/80 px-1 py-0.5 rounded text-[10px]">VITE_API_BASE_URL</code>) in GitHub Secrets/Variables.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShowDiagnostics(!showDiagnostics)}
+                    className="mt-2 text-[11px] font-semibold text-amber-900 underline flex items-center gap-1 cursor-pointer"
+                  >
+                    <HelpCircle className="w-3 h-3" />
+                    <span>{showDiagnostics ? 'Hide Configuration Guide' : 'View Configuration Guide'}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Error Alert Box with proper wrapping */}
           {error && (
             <div className="mb-5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 flex items-start gap-2.5 leading-relaxed break-words animate-fade-in">
@@ -109,14 +133,22 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginSuccess, onBackTo
 
           {/* Connection Diagnostics (collapsible, safe) */}
           {showDiagnostics && (
-            <div className="mb-5 p-3 rounded-lg bg-[#FAF6EE] border border-[#EADBCA] text-[11px] text-[#74685E] space-y-1.5 leading-normal">
-              <p className="font-semibold text-[#282522]">Configuration Diagnostics:</p>
-              <p>• <strong>Host:</strong> {window.location.origin}</p>
-              <p>• <strong>Environment:</strong> {isLocal ? 'Local Development' : 'Production / Cloud Hosting'}</p>
-              <p>• <strong>Supabase Client:</strong> {isClientSupabaseConfigured ? 'Connected (Active)' : 'Not Connected (Using API Gateway)'}</p>
-              <p className="text-[10px] text-gray-500 pt-1">
-                To connect Supabase, configure <code className="bg-white px-1 border border-gray-200">VITE_SUPABASE_URL</code> and <code className="bg-white px-1 border border-gray-200">VITE_SUPABASE_ANON_KEY</code> in repository settings.
-              </p>
+            <div className="mb-5 p-3.5 rounded-xl bg-[#FAF6EE] border border-[#EADBCA] text-[11px] text-[#74685E] space-y-2 leading-normal">
+              <p className="font-semibold text-[#282522]">Production Configuration Status:</p>
+              <div className="space-y-1">
+                <p>• <strong>Host:</strong> {window.location.origin}</p>
+                <p>• <strong>Environment:</strong> {isLocal ? 'Local Development' : 'Production (Static GitHub Pages)'}</p>
+                <p>• <strong>Supabase Connection:</strong> {isClientSupabaseConfigured ? '✅ Active' : '❌ Not Configured'}</p>
+                <p>• <strong>Backend API Gateway:</strong> {getApiBaseUrl() ? `✅ Active (${getApiBaseUrl()})` : '❌ Not Configured'}</p>
+              </div>
+              <div className="pt-2 border-t border-[#EADBCA] text-[10px] text-[#561E28] space-y-1">
+                <p className="font-semibold">Quick Setup via GitHub Repository Settings:</p>
+                <p>1. Go to repository <strong>Settings → Secrets and variables → Actions</strong></p>
+                <p>2. Under <strong>Repository variables</strong>, add:</p>
+                <p className="pl-3 font-mono text-[9px] text-gray-700">• VITE_SUPABASE_URL = https://your-project.supabase.co</p>
+                <p className="pl-3 font-mono text-[9px] text-gray-700">• VITE_SUPABASE_ANON_KEY = your-anon-key</p>
+                <p>3. Re-run the GitHub Actions deployment workflow.</p>
+              </div>
             </div>
           )}
 

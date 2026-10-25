@@ -6,8 +6,6 @@
 
 import { supabase, isClientSupabaseConfigured } from '../supabase';
 
-const API_BASE = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api').replace(/\/+$/, '');
-
 export function isLocalhostEndpoint(url: string): boolean {
   try {
     const parsed = new URL(url, window.location.href);
@@ -20,6 +18,29 @@ export function isLocalhostEndpoint(url: string): boolean {
 export function isCurrentHostLocal(): boolean {
   if (typeof window === 'undefined') return true;
   return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+}
+
+/**
+ * Returns the configured API base URL.
+ * In production (e.g. GitHub Pages), NEVER defaults to localhost.
+ */
+export function getApiBaseUrl(): string | null {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  if (envUrl && typeof envUrl === 'string' && envUrl.trim() !== '') {
+    // In production, guard against accidental localhost configurations
+    if (!isCurrentHostLocal() && isLocalhostEndpoint(envUrl)) {
+      return null;
+    }
+    return envUrl.replace(/\/+$/, '');
+  }
+
+  // ONLY return localhost when running locally on development machine
+  if (isCurrentHostLocal()) {
+    return 'http://localhost:3001/api';
+  }
+
+  // In production (GitHub Pages or remote host), do NOT use localhost
+  return null;
 }
 
 export function getAdminToken(): string | null {
@@ -58,10 +79,12 @@ async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
     throw new Error('Authentication required. Please sign in as an administrator.');
   }
 
-  // Check if trying to reach localhost from a remote production origin
-  if (!isCurrentHostLocal() && isLocalhostEndpoint(API_BASE) && !isClientSupabaseConfigured) {
+  const apiBase = getApiBaseUrl();
+
+  // If no backend API is available in production
+  if (!apiBase) {
     throw new Error(
-      `Remote server is not configured. The API endpoint (${API_BASE}) cannot be reached from ${window.location.origin}. Please configure VITE_API_BASE_URL or connect Supabase.`
+      'Production backend API is not configured. Please connect a Supabase project (VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY) or configure your deployed API server URL (VITE_API_BASE_URL) in repository settings.'
     );
   }
 
@@ -73,7 +96,7 @@ async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
   }
 
   try {
-    const response = await fetch(`${API_BASE}${endpoint}`, {
+    const response = await fetch(`${apiBase}${endpoint}`, {
       ...options,
       headers,
     });
@@ -92,7 +115,7 @@ async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
   } catch (err: any) {
     if (err.name === 'TypeError' || err.message === 'Load failed' || err.message === 'Failed to fetch') {
       throw new Error(
-        `Unable to reach backend service at ${API_BASE}. Please verify that the API server is running and accessible from ${window.location.origin}.`
+        `Unable to reach backend service at ${apiBase}. Please verify that the API server is running and accessible from ${window.location.origin}.`
       );
     }
     throw err;
@@ -104,7 +127,7 @@ export const adminApi = {
    * Authenticates the administrator.
    * Priority:
    * 1. Live Supabase Auth if VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY are configured.
-   * 2. Express Backend API (/api/admin/login).
+   * 2. Express Backend API (/api/admin/login) if deployed or running locally.
    */
   async login(email: string, password: string) {
     if (!email || !password) {
@@ -139,21 +162,22 @@ export const adminApi = {
           user: data.user,
         };
       } catch (sbErr: any) {
-        // If Supabase rejected credentials or project error, bubble up clear message
         throw new Error(sbErr?.message || 'Supabase authentication failed.');
       }
     }
 
-    // 2. Check if trying to reach localhost from a remote production origin (e.g. GitHub Pages)
-    if (!isCurrentHostLocal() && isLocalhostEndpoint(API_BASE)) {
+    // 2. Check if a live backend API is configured
+    const apiBase = getApiBaseUrl();
+
+    if (!apiBase) {
       throw new Error(
-        `Authentication server is unavailable. The local backend (${API_BASE}) cannot be reached from ${window.location.origin}. Please set VITE_API_BASE_URL to your deployed API server or configure VITE_SUPABASE_URL in your hosting settings.`
+        'Production authentication is not configured yet. GitHub Pages requires either a connected Supabase project (VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY) or a deployed backend API URL (VITE_API_BASE_URL) configured in your repository settings.'
       );
     }
 
     // 3. Backend Express API Login
     try {
-      const res = await fetch(`${API_BASE}/admin/login`, {
+      const res = await fetch(`${apiBase}/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: email.trim(), password }),
@@ -171,7 +195,7 @@ export const adminApi = {
     } catch (err: any) {
       if (err.name === 'TypeError' || err.message === 'Load failed' || err.message === 'Failed to fetch') {
         throw new Error(
-          `Unable to connect to administration server at ${API_BASE}. The backend is currently offline or unreachable from this browser.`
+          `Unable to connect to administration server at ${apiBase}. The backend is currently offline or unreachable from this browser.`
         );
       }
       throw err;

@@ -398,9 +398,12 @@ adminRouter.post('/upload', upload.single('image'), async (req: Request, res: Re
       return;
     }
 
-    // Local serving fallback
+    // Serving fallback: dynamic host if deployed or local
     const port = process.env.PORT || 3001;
-    const publicUrl = `http://localhost:${port}/uploads/${fileName}`;
+    const backendHost =
+      process.env.BACKEND_PUBLIC_URL ||
+      `${req.protocol}://${req.get('host') || `localhost:${port}`}`;
+    const publicUrl = `${backendHost}/uploads/${fileName}`;
 
     res.json({
       success: true,
