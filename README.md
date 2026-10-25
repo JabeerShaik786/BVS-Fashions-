@@ -1,5 +1,7 @@
 # BVS Fashions — Indian Ethnic Wear E-Commerce & WhatsApp Commerce
 
+> **Live Website (GitHub Pages)**: [https://jabeershaik786.github.io/BVS-Fashions-/](https://jabeershaik786.github.io/BVS-Fashions-/)
+
 A mobile-responsive Indian traditional clothing catalogue with WhatsApp click-to-chat order inquiries and a private Admin Dashboard.
 
 ## Features

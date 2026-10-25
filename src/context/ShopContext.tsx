@@ -68,7 +68,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Detect admin view from URL or hash
   const [viewMode, setViewModeState] = useState<'public' | 'admin'>(() => {
-    if (window.location.pathname.startsWith('/admin') || window.location.hash.startsWith('#admin')) {
+    if (window.location.pathname.includes('/admin') || window.location.hash.startsWith('#admin')) {
       return 'admin';
     }
     return 'public';
