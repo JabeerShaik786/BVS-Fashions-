@@ -79,23 +79,35 @@ adminRouter.post('/login', async (req: Request, res: Response) => {
       return;
     }
 
-    // Local / Initial setup mode validation
-    // Allows admin access using default or configured credentials until client sets up Supabase Auth
-    if (email === 'admin@bvsfashions.com' && (password === 'admin123' || password === 'bvsadmin2026')) {
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    // In production, fallback credentials are strictly prohibited
+    if (isProduction) {
+      res.status(401).json({
+        error: 'Live Supabase project authentication is required in production.',
+      });
+      return;
+    }
+
+    // In development / local testing environment only:
+    const devAdminEmail = process.env.DEV_ADMIN_EMAIL || 'admin@bvsfashions.com';
+    const devAdminPassword = process.env.DEV_ADMIN_PASSWORD || 'admin123';
+
+    if (email === devAdminEmail && password === devAdminPassword) {
       res.json({
         success: true,
-        message: 'Logged in as BVS Admin (Local Mode).',
-        token: 'bvs_admin_demo_token_secret',
+        message: 'Logged in as BVS Admin (Local Development Only).',
+        token: 'bvs_admin_dev_token_secret',
         user: {
-          id: 'admin-local-1',
-          email: 'admin@bvsfashions.com',
+          id: 'admin-local-dev',
+          email: devAdminEmail,
         },
       });
       return;
     }
 
     res.status(401).json({
-      error: 'Invalid admin credentials. Use admin@bvsfashions.com / admin123 or connect Supabase.',
+      error: 'Invalid administrator credentials.',
     });
   } catch (err: any) {
     res.status(500).json({ error: 'Server error during authentication.', details: err?.message });

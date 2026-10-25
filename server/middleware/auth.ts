@@ -51,12 +51,21 @@ export const requireAdminAuth = async (
       return next();
     }
 
-    // Fallback/Local development mode verification
-    // Accepts Supabase test tokens or local admin tokens
-    if (token === 'bvs_admin_demo_token_secret' || token.startsWith('sb_demo_')) {
+    const isProduction = process.env.NODE_ENV === 'production';
+
+    // In production without Supabase, block all admin write requests
+    if (isProduction) {
+      res.status(401).json({
+        error: 'Unauthorized: Production Supabase authentication required.',
+      });
+      return;
+    }
+
+    // Strictly in local development environment:
+    if (token === 'bvs_admin_dev_token_secret' || token === 'bvs_admin_demo_token_secret') {
       req.adminUser = {
-        id: 'admin-local-1',
-        email: 'admin@bvsfashions.com',
+        id: 'admin-local-dev',
+        email: process.env.DEV_ADMIN_EMAIL || 'admin@bvsfashions.com',
       };
       return next();
     }
