@@ -16,6 +16,7 @@ export const MobileMenu: React.FC = () => {
     setIsWishlistOpen,
     setIsCartOpen,
     setIsAccountModalOpen,
+    setActiveInfoModal,
     setViewMode,
   } = useShop();
 
@@ -100,6 +101,62 @@ export const MobileMenu: React.FC = () => {
               <MessageCircle className="w-4 h-4 fill-white" />
               <span>Order on WhatsApp</span>
             </a>
+          </div>
+
+          {/* Main Navigation Links */}
+          <div className="p-4 border-b border-[#EADBCA] bg-[#FAF6EE]/40">
+            <div className="grid grid-cols-2 gap-2 text-xs font-semibold uppercase tracking-wider">
+              <button
+                onClick={() => {
+                  setSelectedCategory('all');
+                  setSearchQuery('');
+                  setIsMobileMenuOpen(false);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="py-2.5 px-3 bg-white border border-[#EADBCA] rounded-lg text-left text-[#282522] hover:text-[#702C38] hover:border-[#702C38] transition-colors"
+              >
+                Home
+              </button>
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  const el = document.getElementById('products-section');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="py-2.5 px-3 bg-white border border-[#EADBCA] rounded-lg text-left text-[#282522] hover:text-[#702C38] hover:border-[#702C38] transition-colors"
+              >
+                Products
+              </button>
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  const el = document.getElementById('saree-wardrobe-section');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="py-2.5 px-3 bg-white border border-[#EADBCA] rounded-lg text-left text-[#282522] hover:text-[#702C38] hover:border-[#702C38] transition-colors"
+              >
+                Categories
+              </button>
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  const el = document.getElementById('brand-story-section');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="py-2.5 px-3 bg-white border border-[#EADBCA] rounded-lg text-left text-[#282522] hover:text-[#702C38] hover:border-[#702C38] transition-colors"
+              >
+                About Us
+              </button>
+            </div>
+            <button
+              onClick={() => {
+                setIsMobileMenuOpen(false);
+                setActiveInfoModal('tracking');
+              }}
+              className="mt-2 w-full py-2.5 px-3 bg-[#702C38]/10 border border-[#702C38]/30 rounded-lg text-center text-xs font-semibold uppercase tracking-wider text-[#702C38] hover:bg-[#702C38] hover:text-white transition-colors"
+            >
+              Track Order Status
+            </button>
           </div>
 
           {/* Navigation Category List */}

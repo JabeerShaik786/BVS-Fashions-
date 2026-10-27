@@ -49,8 +49,8 @@ interface ShopContextType {
   setIsMobileMenuOpen: (open: boolean) => void;
   isAccountModalOpen: boolean;
   setIsAccountModalOpen: (open: boolean) => void;
-  activeInfoModal: 'faq' | 'shipping' | 'returns' | 'privacy' | 'terms' | null;
-  setActiveInfoModal: (modal: 'faq' | 'shipping' | 'returns' | 'privacy' | 'terms' | null) => void;
+  activeInfoModal: 'faq' | 'shipping' | 'returns' | 'privacy' | 'terms' | 'tracking' | null;
+  setActiveInfoModal: (modal: 'faq' | 'shipping' | 'returns' | 'privacy' | 'terms' | 'tracking' | null) => void;
 
   // Notification Toast
   toast: ToastMessage | null;
@@ -228,7 +228,7 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
-  const [activeInfoModal, setActiveInfoModal] = useState<'faq' | 'shipping' | 'returns' | 'privacy' | 'terms' | null>(null);
+  const [activeInfoModal, setActiveInfoModal] = useState<'faq' | 'shipping' | 'returns' | 'privacy' | 'terms' | 'tracking' | null>(null);
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [toast, setToast] = useState<ToastMessage | null>(null);
 

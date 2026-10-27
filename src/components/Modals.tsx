@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useShop } from '../context/ShopContext';
-import { X, User, Lock, Mail, HelpCircle, FileText, ShieldAlert } from 'lucide-react';
+import { X, User, Lock, Mail, HelpCircle, FileText, ShieldAlert, Package } from 'lucide-react';
 
 export const Modals: React.FC = () => {
   const {
@@ -15,6 +15,7 @@ export const Modals: React.FC = () => {
   const [authTab, setAuthTab] = useState<'login' | 'register'>('login');
   const [authEmail, setAuthEmail] = useState('');
   const [authPassword, setAuthPassword] = useState('');
+  const [trackingInput, setTrackingInput] = useState('');
 
   const handleAuthSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,11 +164,14 @@ export const Modals: React.FC = () => {
               <div className="flex items-center gap-2.5">
                 {activeInfoModal === 'faq' ? (
                   <HelpCircle className="w-5 h-5 text-[#702C38]" />
+                ) : activeInfoModal === 'tracking' ? (
+                  <Package className="w-5 h-5 text-[#702C38]" />
                 ) : (
                   <FileText className="w-5 h-5 text-[#702C38]" />
                 )}
                 <h3 className="font-serif text-lg font-bold text-[#282522] capitalize">
                   {activeInfoModal === 'faq' && 'Frequently Asked Questions'}
+                  {activeInfoModal === 'tracking' && 'Track Your Order'}
                   {activeInfoModal === 'shipping' && 'Shipping & Delivery Policy Placeholder'}
                   {activeInfoModal === 'returns' && 'Returns & Exchange Policy Placeholder'}
                   {activeInfoModal === 'privacy' && 'Privacy Policy'}
@@ -221,6 +225,59 @@ export const Modals: React.FC = () => {
                     </h5>
                     <p>
                       Absolutely. Our team provides dedicated size and fabric matching consultations. You can reach out directly via our customer support channels.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {activeInfoModal === 'tracking' && (
+                <div className="space-y-4">
+                  <p className="text-xs text-[#74685E]">
+                    Enter your Order ID, WhatsApp inquiry number, or mobile number to track the dispatch and delivery status of your handloom order.
+                  </p>
+                  <form
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      const id = trackingInput.trim() || 'INQ-' + Math.floor(100000 + Math.random() * 900000);
+                      const text = `Hello BVS Fashions! I would like to check the tracking status of my order / inquiry (Ref: ${id}).`;
+                      window.open(`https://wa.me/918639778188?text=${encodeURIComponent(text)}`, '_blank');
+                      closeModal();
+                    }}
+                    className="space-y-3"
+                  >
+                    <div>
+                      <label className="block text-[11px] font-semibold text-[#282522] uppercase tracking-wider mb-1.5">
+                        Order ID or Phone Number
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g. BVS-2026-8812 or 8639778188"
+                        value={trackingInput}
+                        onChange={(e) => setTrackingInput(e.target.value)}
+                        className="w-full bg-[#FAF6EE] border border-[#EADBCA] text-[#282522] placeholder-[#74685E]/70 px-4 py-2.5 rounded-lg text-xs focus:outline-none focus:border-[#702C38] focus:ring-1 focus:ring-[#702C38]"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-full py-3 bg-[#702C38] hover:bg-[#561E28] text-white text-xs font-semibold uppercase tracking-wider rounded-md transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <span>Track Status via WhatsApp</span>
+                    </button>
+                  </form>
+                  <div className="p-3.5 bg-[#FAF6EE]/70 rounded-lg border border-[#EADBCA] text-[11px] text-[#74685E] space-y-1.5">
+                    <p className="font-semibold text-[#282522]">Handloom Dispatch Timeline</p>
+                    <p>All garments are carefully inspected and dispatched within 3-7 business days across India.</p>
+                    <p>
+                      Direct WhatsApp Helpline:{' '}
+                      <a
+                        href="https://wa.me/918639778188"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#702C38] font-semibold underline"
+                      >
+                        +91 8639778188
+                      </a>
                     </p>
                   </div>
                 </div>

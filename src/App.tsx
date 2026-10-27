@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ShopProvider, useShop } from './context/ShopContext';
 import { Header } from './components/Header';
-import { CategoryNav } from './components/CategoryNav';
 import { Hero } from './components/Hero';
 import { CategoryGrid } from './components/CategoryGrid';
 import { SareeWardrobe } from './components/SareeWardrobe';
@@ -56,9 +55,8 @@ function MainLayout() {
   // Public Storefront (Preserving exact approved design)
   return (
     <div className="min-h-screen flex flex-col bg-[#F7F0E5] text-[#282522] selection:bg-[#702C38] selection:text-white">
-      {/* Navigation & Header */}
+      {/* Navigation & Header (with Top Search Row & Bottom Nav Row) */}
       <Header />
-      <CategoryNav />
 
       {/* Main Content Sections */}
       <main className="flex-1">
