@@ -1,40 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useShop } from '../context/ShopContext';
-import { CATEGORIES } from '../data/products';
 import type { CategoryId } from '../types';
 import { 
   Mail, 
-  Send, 
   MapPin, 
   Phone, 
-  Sparkles, 
-  CheckCircle2, 
-  AlertCircle 
+  MessageCircle, 
+  Lock
 } from 'lucide-react';
 
 export const Footer: React.FC = () => {
   const { setSelectedCategory, setSearchQuery, setActiveInfoModal, setViewMode } = useShop();
-
-  const [newsletterEmail, setNewsletterEmail] = useState('');
-  const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [newsletterFeedback, setNewsletterFeedback] = useState('');
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
-    if (!emailRegex.test(newsletterEmail.trim())) {
-      setNewsletterStatus('error');
-      setNewsletterFeedback('Please enter a valid email address.');
-      return;
-    }
-
-    setNewsletterStatus('success');
-    setNewsletterFeedback(
-      'Demo Notice: Thank you! In this frontend demonstration, newsletter emails are not stored on an external service.'
-    );
-    setNewsletterEmail('');
-  };
 
   const handleCategoryClick = (catId: CategoryId) => {
     setSelectedCategory(catId);
@@ -43,196 +19,189 @@ export const Footer: React.FC = () => {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const scrollToSection = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <footer className="bg-[#282522] text-[#F7F0E5] pt-16 pb-12 border-t-4 border-[#D4B16A]">
+    <footer className="bg-[#282522] text-[#F7F0E5] pt-16 sm:pt-20 pb-12 border-t-4 border-[#D4B16A]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Main Footer Columns */}
+        {/* Main Footer Columns matching Chenetha Sarees structure */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 pb-12 border-b border-white/10">
           
-          {/* Col 1: Brand Wordmark & Narrative (4 cols) */}
-          <div className="lg:col-span-4">
-            <div className="flex items-center gap-2 mb-4">
+          {/* Brand Wordmark & Narrative (4 cols) */}
+          <div className="lg:col-span-5">
+            <div className="flex items-center gap-2.5 mb-5">
               <div className="w-8 h-8 rounded bg-[#702C38] border border-[#D4B16A] flex items-center justify-center text-[#F7F0E5] font-serif font-bold text-sm">
                 BVS
               </div>
-              <span className="font-serif text-2xl font-bold tracking-[0.16em] text-[#F7F0E5]">
+              <span className="font-serif text-2xl font-bold tracking-[0.18em] text-[#F7F0E5]">
                 BVS FASHIONS
               </span>
             </div>
 
-            <p className="text-xs sm:text-sm text-[#F7F0E5]/70 leading-relaxed mb-6">
-              Authentic Indian traditional wear designed for real families. Bringing together sarees, kurtas, and joyful celebration attire across generations at welcoming, honest prices.
+            <p className="text-sm text-[#F7F0E5]/80 font-light leading-relaxed mb-6 max-w-sm">
+              Thoughtfully selected ethnic wear that celebrates India's looms, artisans and enduring grace. Curated traditional sarees, kurtas, and celebratory family attire at honest, welcoming prices.
             </p>
 
-            {/* Social Media Link Placeholders */}
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] uppercase tracking-wider text-[#D4B16A] font-semibold mr-2">
-                Connect:
-              </span>
-              {['Instagram', 'Facebook', 'Pinterest', 'YouTube'].map((platform) => (
-                <span
-                  key={platform}
-                  className="px-2.5 py-1 text-[11px] rounded bg-white/5 border border-white/10 text-[#F7F0E5]/70 hover:text-[#D4B16A] hover:border-[#D4B16A]/50 transition-colors cursor-pointer"
-                  title={`[Placeholder] ${platform} official account`}
-                >
-                  {platform}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Col 2: Shop Categories (2 cols) */}
-          <div className="lg:col-span-2">
-            <h4 className="font-serif text-sm font-semibold tracking-wider uppercase text-[#D4B16A] mb-4">
-              Shop Categories
-            </h4>
-            <ul className="space-y-2 text-xs text-[#F7F0E5]/70">
-              {CATEGORIES.map((cat) => (
-                <li key={cat.id}>
-                  <button
-                    onClick={() => handleCategoryClick(cat.id as CategoryId)}
-                    className="hover:text-white hover:underline transition-colors text-left"
+            {/* WhatsApp Direct Ordering Card */}
+            <div className="p-4 rounded-xl bg-white/5 border border-white/10 max-w-md">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#25D366]/20 flex items-center justify-center text-[#25D366] shrink-0">
+                  <MessageCircle className="w-5 h-5 fill-current" />
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-white uppercase tracking-wider">WhatsApp Ordering & Enquiry</p>
+                  <a 
+                    href="https://wa.me/918639778188?text=Hello%20BVS%20Fashions!%20I%20would%20like%20to%20order%20from%20your%20collection." 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-xs text-[#D4B16A] hover:underline font-mono"
                   >
-                    {cat.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Col 3: Customer Care & Policies (3 cols) */}
-          <div className="lg:col-span-3">
-            <h4 className="font-serif text-sm font-semibold tracking-wider uppercase text-[#D4B16A] mb-4">
-              Customer Care & Policies
-            </h4>
-            <ul className="space-y-2 text-xs text-[#F7F0E5]/70">
-              <li>
-                <button
-                  onClick={() => setActiveInfoModal('faq')}
-                  className="hover:text-[#D4B16A] transition-colors flex items-center gap-1.5"
-                >
-                  <span>Frequently Asked Questions (FAQ)</span>
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setActiveInfoModal('shipping')}
-                  className="hover:text-[#D4B16A] transition-colors"
-                >
-                  Shipping & Delivery Policy
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setActiveInfoModal('returns')}
-                  className="hover:text-[#D4B16A] transition-colors"
-                >
-                  Returns & Exchange Policy
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setActiveInfoModal('privacy')}
-                  className="hover:text-[#D4B16A] transition-colors"
-                >
-                  Privacy Policy
-                </button>
-              </li>
-              <li>
-                <button
-                  onClick={() => setActiveInfoModal('terms')}
-                  className="hover:text-[#D4B16A] transition-colors"
-                >
-                  Terms & Conditions
-                </button>
-              </li>
-              <li className="pt-2 border-t border-white/10">
-                <button
-                  onClick={() => setViewMode('admin')}
-                  className="text-[#D4B16A] hover:underline font-semibold transition-colors flex items-center gap-1"
-                >
-                  <span>Store Owner Admin Portal →</span>
-                </button>
-              </li>
-            </ul>
-
-            {/* Contact Information Placeholders (strictly non-invented per instruction) */}
-            <div className="mt-6 pt-4 border-t border-white/10 text-[11px] text-[#F7F0E5]/60 space-y-1.5">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-3.5 h-3.5 text-[#D4B16A] shrink-0" />
-                <span>Store Location: [Business Address Placeholder]</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Phone className="w-3.5 h-3.5 text-[#D4B16A] shrink-0" />
-                <span>Contact Number: [Official Phone Placeholder]</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="w-3.5 h-3.5 text-[#D4B16A] shrink-0" />
-                <span>Email: [Support Email Placeholder]</span>
+                    +91 8639778188
+                  </a>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Col 4: Newsletter Subscription (3 cols) */}
+          {/* Explore Links matching Chenetha Sarees (3 cols) */}
           <div className="lg:col-span-3">
-            <h4 className="font-serif text-sm font-semibold tracking-wider uppercase text-[#D4B16A] mb-2 flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-[#D4B16A]" />
-              <span>Festive Newsletter</span>
+            <h4 className="font-serif text-sm font-semibold tracking-[0.2em] uppercase text-[#D4B16A] mb-4">
+              Explore
             </h4>
-            <p className="text-xs text-[#F7F0E5]/70 mb-4 leading-relaxed">
-              Receive updates on seasonal handloom weaves, festive catalogs, and family collection launches.
-            </p>
-
-            <form onSubmit={handleSubscribe} className="space-y-2">
-              <div className="relative">
-                <input
-                  type="email"
-                  placeholder="Enter your email address"
-                  value={newsletterEmail}
-                  onChange={(e) => {
-                    setNewsletterEmail(e.target.value);
-                    if (newsletterStatus !== 'idle') setNewsletterStatus('idle');
-                  }}
-                  className="w-full bg-white/10 border border-white/20 rounded-md py-2.5 pl-3 pr-10 text-xs text-white placeholder-white/40 focus:outline-none focus:border-[#D4B16A]"
-                />
+            <ul className="space-y-2.5 text-xs text-[#F7F0E5]/75 font-light">
+              <li>
                 <button
-                  type="submit"
-                  className="absolute right-1.5 top-1.5 p-1.5 bg-[#702C38] hover:bg-[#8E3947] text-[#D4B16A] rounded transition-colors"
-                  aria-label="Subscribe"
+                  onClick={() => scrollToSection('products-section')}
+                  className="hover:text-white hover:underline transition-colors text-left cursor-pointer"
                 >
-                  <Send className="w-3.5 h-3.5" />
+                  All Products
                 </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => scrollToSection('collections-section')}
+                  className="hover:text-white hover:underline transition-colors text-left cursor-pointer"
+                >
+                  Shop by Collection (Women, Men, Kids)
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => scrollToSection('saree-wardrobe-section')}
+                  className="hover:text-white hover:underline transition-colors text-left cursor-pointer"
+                >
+                  The Saree Wardrobe
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleCategoryClick('kanchi-pattu')}
+                  className="hover:text-white hover:underline transition-colors text-left cursor-pointer"
+                >
+                  Kanchi Pattu Sarees
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => handleCategoryClick('banarasi')}
+                  className="hover:text-white hover:underline transition-colors text-left cursor-pointer"
+                >
+                  Banarasi Brocades
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => scrollToSection('brand-story-section')}
+                  className="hover:text-white hover:underline transition-colors text-left cursor-pointer"
+                >
+                  From Loom to Legacy (Our Story)
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          {/* Visit & Connect matching Chenetha Sarees (4 cols) */}
+          <div className="lg:col-span-4">
+            <h4 className="font-serif text-sm font-semibold tracking-[0.2em] uppercase text-[#D4B16A] mb-4">
+              Visit & connect
+            </h4>
+            
+            <div className="space-y-3 text-xs text-[#F7F0E5]/80 font-light leading-relaxed">
+              <div className="flex items-start gap-2.5">
+                <MapPin className="w-4 h-4 text-[#D4B16A] shrink-0 mt-0.5" />
+                <span>Hyderabad, Telangana, India</span>
               </div>
 
-              {/* Feedback Alert */}
-              {newsletterStatus === 'error' && (
-                <div className="flex items-start gap-1.5 text-[11px] text-red-400">
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                  <span>{newsletterFeedback}</span>
-                </div>
-              )}
-              {newsletterStatus === 'success' && (
-                <div className="flex items-start gap-1.5 text-[11px] text-[#D4B16A] bg-white/5 p-2 rounded border border-[#D4B16A]/30">
-                  <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                  <span>{newsletterFeedback}</span>
-                </div>
-              )}
-            </form>
+              <div className="flex items-center gap-2.5">
+                <Phone className="w-4 h-4 text-[#D4B16A] shrink-0" />
+                <a href="tel:+918639778188" className="hover:text-[#D4B16A] transition-colors font-mono">
+                  +91 8639778188
+                </a>
+              </div>
 
-            <p className="text-[10px] text-[#F7F0E5]/50 mt-3 italic">
-              * Frontend demonstration. Submitting does not trigger real emails.
-            </p>
+              <div className="flex items-center gap-2.5">
+                <Mail className="w-4 h-4 text-[#D4B16A] shrink-0" />
+                <a href="mailto:hello@bvsfashions.com" className="hover:text-[#D4B16A] transition-colors">
+                  hello@bvsfashions.com
+                </a>
+              </div>
+
+              {/* Follow Platforms */}
+              <div className="pt-3">
+                <p className="text-[10px] uppercase tracking-widest text-[#D4B16A] font-bold mb-2">Follow & Inquiries</p>
+                <div className="flex items-center gap-2">
+                  <a
+                    href="https://instagram.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2.5 py-1 text-[11px] rounded bg-white/5 border border-white/10 text-[#F7F0E5]/80 hover:text-[#D4B16A] transition-colors"
+                  >
+                    Instagram
+                  </a>
+                  <a
+                    href="https://wa.me/918639778188"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-2.5 py-1 text-[11px] rounded bg-white/5 border border-white/10 text-[#F7F0E5]/80 hover:text-[#25D366] transition-colors"
+                  >
+                    WhatsApp Chat
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
 
         </div>
 
-        {/* Bottom Copyright & Brand Statement */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#F7F0E5]/50 gap-4">
-          <p>© 2026 BVS Fashions. All rights reserved.</p>
-          <p className="text-center sm:text-right">
-            Handcrafted with pride for Indian Celebrations & Families.
-          </p>
+        {/* Bottom Bar: Copyright & Management Portal Link */}
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#F7F0E5]/60 font-light">
+          <p>© 2026 BVS Fashions. All rights reserved. Handcrafted Indian Ethnic Wear.</p>
+          
+          <div className="flex items-center gap-6">
+            <button
+              onClick={() => setActiveInfoModal('shipping')}
+              className="hover:text-white transition-colors cursor-pointer"
+            >
+              Shipping & Delivery
+            </button>
+            <button
+              onClick={() => setActiveInfoModal('returns')}
+              className="hover:text-white transition-colors cursor-pointer"
+            >
+              Returns & Care
+            </button>
+            <button
+              onClick={() => setViewMode('admin')}
+              className="flex items-center gap-1.5 text-[#D4B16A] hover:underline font-semibold cursor-pointer"
+            >
+              <Lock className="w-3 h-3" />
+              <span>Admin Portal</span>
+            </button>
+          </div>
         </div>
 
       </div>

@@ -79,7 +79,23 @@ function mapDbProductToProduct(item: any): Product {
     name: item.name,
     category: item.category_id as CategoryId,
     categoryLabel:
-      item.category_id === 'sarees'
+      item.category_id === 'kanchi-pattu'
+        ? 'Kanchi Pattu'
+        : item.category_id === 'banarasi'
+        ? 'Banarasi'
+        : item.category_id === 'zari-silk'
+        ? 'Zari Silk'
+        : item.category_id === 'georgette'
+        ? 'Georgette'
+        : item.category_id === 'pattu-sarees'
+        ? 'Pattu Sarees'
+        : item.category_id === 'soft-silk'
+        ? 'Soft Silk'
+        : item.category_id === 'tissue-silk'
+        ? 'Tissue Silk'
+        : item.category_id === 'organza'
+        ? 'Organza'
+        : item.category_id === 'sarees'
         ? 'Sarees'
         : item.category_id === 'womens-ethnic'
         ? "Women's Wear"
@@ -87,7 +103,7 @@ function mapDbProductToProduct(item: any): Product {
         ? "Men's Wear"
         : item.category_id === 'kids-wear'
         ? "Kids' Wear"
-        : 'Festive & Wedding',
+        : 'Festive & Bridal',
     price: activePrice,
     originalPrice: salePrice ? regularPrice : undefined,
     discountPercent: discount,
@@ -346,7 +362,35 @@ export const ShopProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Category filter
     if (selectedCategory === 'all') return true;
     if (selectedCategory === 'new-arrivals') return p.isNewArrival === true;
-    return p.category === selectedCategory;
+
+    if (selectedCategory === 'sarees') {
+      const sareeCats = [
+        'sarees',
+        'kanchi-pattu',
+        'banarasi',
+        'zari-silk',
+        'georgette',
+        'pattu-sarees',
+        'soft-silk',
+        'tissue-silk',
+        'organza',
+      ];
+      return (
+        sareeCats.includes(p.category) ||
+        p.categoryLabel.toLowerCase().includes('saree') ||
+        p.name.toLowerCase().includes('saree')
+      );
+    }
+
+    if (p.category === selectedCategory) return true;
+
+    // Support subcategory name/fabric match (e.g. 'kanchi-pattu' matches 'Kanchi Pattu Saree')
+    const catWords = selectedCategory.replace('-', ' ').toLowerCase();
+    return (
+      p.name.toLowerCase().includes(catWords) ||
+      (p.fabric && p.fabric.toLowerCase().includes(catWords)) ||
+      p.categoryLabel.toLowerCase().includes(catWords)
+    );
   });
 
   return (

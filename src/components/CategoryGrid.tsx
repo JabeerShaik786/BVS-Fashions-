@@ -1,14 +1,23 @@
 import React from 'react';
 import { useShop } from '../context/ShopContext';
-import { CATEGORY_CARDS } from '../data/products';
+import { SHOP_COLLECTIONS } from '../data/products';
 import type { CategoryId } from '../types';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
 export const CategoryGrid: React.FC = () => {
   const { setSelectedCategory, setSearchQuery } = useShop();
 
-  const handleCardClick = (id: string) => {
-    setSelectedCategory(id as CategoryId);
+  const handleCardClick = (id: CategoryId) => {
+    setSelectedCategory(id);
+    setSearchQuery('');
+    const el = document.getElementById('products-section');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleViewAll = () => {
+    setSelectedCategory('all');
     setSearchQuery('');
     const el = document.getElementById('products-section');
     if (el) {
@@ -17,62 +26,67 @@ export const CategoryGrid: React.FC = () => {
   };
 
   return (
-    <section className="py-14 sm:py-20 bg-[#F7F0E5]">
+    <section id="collections-section" className="py-16 sm:py-24 bg-[#F7F0E5] border-b border-[#EADBCA]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#702C38] mb-2">
-            Curated Collections
-          </p>
-          <h2 className="font-serif text-3xl sm:text-4xl text-[#282522] font-normal tracking-tight">
-            Shop by Category
-          </h2>
-          <div className="w-12 h-0.5 bg-[#D4B16A] mx-auto mt-3 mb-3" />
-          <p className="text-[#74685E] text-sm sm:text-base">
-            Handcrafted sarees, tailored kurtas, and joyful kids’ outfits designed for every Indian celebration.
-          </p>
+        {/* Section Header matching Chenetha Sarees: "Shop by collection" + "View all collections" */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 sm:mb-14">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.22em] text-[#702C38] mb-2">
+              <Sparkles className="w-3.5 h-3.5 text-[#D4B16A]" />
+              <span>Family Ethnic Wear</span>
+            </div>
+            <h2 className="font-serif text-3xl sm:text-4xl lg:text-5xl text-[#282522] font-normal tracking-tight">
+              Shop by collection
+            </h2>
+          </div>
+
+          <button
+            onClick={handleViewAll}
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-[#702C38] hover:text-[#561E28] transition-colors pb-1 border-b border-[#702C38]/40 hover:border-[#702C38] self-start sm:self-auto cursor-pointer"
+          >
+            <span>View all collections</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         </div>
 
-        {/* Responsive Grid: 2 cols on mobile, 3 on tablet, 5 on desktop */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-5">
-          {CATEGORY_CARDS.map((category) => (
+        {/* 3 Editorial Portrait Cards (Women, Men, Kids) matching Chenetha Sarees layout */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          {SHOP_COLLECTIONS.map((col) => (
             <div
-              key={category.id}
-              onClick={() => handleCardClick(category.id)}
-              className="group cursor-pointer bg-white rounded-xl overflow-hidden border border-[#EADBCA] shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col"
+              key={col.id}
+              onClick={() => handleCardClick(col.id)}
+              className="group cursor-pointer bg-white rounded-2xl overflow-hidden border border-[#EADBCA] shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col relative"
             >
-              {/* Category Image */}
-              <div className="relative aspect-[3/4] overflow-hidden bg-[#FAF6EE]">
+              {/* Image Container with 4:5 aspect ratio */}
+              <div className="relative aspect-[4/5] overflow-hidden bg-[#FAF6EE]">
                 <img
-                  src={category.image}
-                  alt={category.name}
-                  className="w-full h-full object-cover object-top group-hover:scale-108 transition-transform duration-500 ease-out"
+                  src={col.image}
+                  alt={col.title}
+                  className="w-full h-full object-cover object-top group-hover:scale-106 transition-transform duration-700 ease-out"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent opacity-85 group-hover:opacity-95 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#282522]/85 via-black/25 to-transparent opacity-90 group-hover:opacity-95 transition-opacity" />
                 
-                {/* Category Tag */}
-                <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
-                  <span className="text-[9px] sm:text-[10px] font-medium tracking-wide uppercase px-1.5 sm:px-2 py-0.5 bg-white/95 text-[#702C38] rounded-full backdrop-blur-xs">
-                    {category.tag}
+                {/* Tag Badge */}
+                <div className="absolute top-4 left-4">
+                  <span className="text-[10px] font-semibold tracking-[0.2em] uppercase px-3 py-1 bg-white/95 text-[#702C38] rounded-full shadow-xs backdrop-blur-xs">
+                    {col.tag}
                   </span>
                 </div>
 
-                {/* Card Title on Image */}
-                <div className="absolute bottom-2.5 left-2.5 right-2.5 sm:bottom-3 sm:left-3 sm:right-3 text-white">
-                  <h3 className="font-serif text-sm sm:text-lg font-medium tracking-wide leading-snug line-clamp-2">
-                    {category.name}
+                {/* Content Overlay */}
+                <div className="absolute bottom-6 left-6 right-6 text-white">
+                  <h3 className="font-serif text-2xl sm:text-3xl font-medium tracking-wide mb-1 text-white">
+                    {col.title}
                   </h3>
-                </div>
-              </div>
+                  <p className="text-xs sm:text-sm text-white/80 font-light mb-4 line-clamp-2">
+                    {col.subtitle}
+                  </p>
 
-              {/* Bottom Card Action */}
-              <div className="p-2.5 sm:p-3.5 bg-[#FAF6EE] flex items-center justify-between border-t border-[#EADBCA] group-hover:bg-[#702C38] transition-colors">
-                <span className="text-[11px] sm:text-xs font-medium text-[#702C38] group-hover:text-white transition-colors truncate mr-1">
-                  Explore
-                </span>
-                <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-full bg-white flex items-center justify-center text-[#702C38] group-hover:bg-[#D4B16A] group-hover:text-[#282522] transition-colors shrink-0">
-                  <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                  <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-[#D4B16A] group-hover:text-white transition-colors">
+                    <span>Shop collection</span>
+                    <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1.5" />
+                  </div>
                 </div>
               </div>
             </div>

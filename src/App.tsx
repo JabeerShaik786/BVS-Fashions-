@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import { CategoryNav } from './components/CategoryNav';
 import { Hero } from './components/Hero';
 import { CategoryGrid } from './components/CategoryGrid';
+import { SareeWardrobe } from './components/SareeWardrobe';
 import { FeaturedProducts } from './components/FeaturedProducts';
 import { FestiveCampaign } from './components/FestiveCampaign';
 import { BrandBenefits } from './components/BrandBenefits';
@@ -65,20 +66,23 @@ function MainLayout() {
         {/* Hero Section */}
         <Hero />
 
-        {/* Shop by Category */}
+        {/* Shop by Collection (Women, Men, Kids) */}
         <CategoryGrid />
 
-        {/* Featured Collections & Products Grid */}
+        {/* The Saree Wardrobe (Saree Drape Categories) */}
+        <SareeWardrobe />
+
+        {/* The Complete Collection / Product Grid */}
         <FeaturedProducts />
 
         {/* Festive Campaign */}
         <FestiveCampaign />
 
-        {/* Brand Benefits */}
-        <BrandBenefits />
-
-        {/* Brand Story & Heritage */}
+        {/* Brand Story (From Loom to Legacy) */}
         <BrandStory />
+
+        {/* Brand Benefits (The BVS Promise) */}
+        <BrandBenefits />
       </main>
 
       {/* Comprehensive Footer */}

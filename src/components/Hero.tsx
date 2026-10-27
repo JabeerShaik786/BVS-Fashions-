@@ -1,121 +1,119 @@
 import React from 'react';
 import { useShop } from '../context/ShopContext';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, MessageCircle } from 'lucide-react';
 
 export const Hero: React.FC = () => {
-  const { setSelectedCategory, setActiveTab } = useShop();
+  const { setSelectedCategory } = useShop();
 
   const handleShopCollections = () => {
-    setSelectedCategory('all');
-    const el = document.getElementById('products-section');
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const handleExploreNewArrivals = () => {
-    setActiveTab('new-arrivals');
-    setSelectedCategory('all');
+    setSelectedCategory('sarees');
     const el = document.getElementById('products-section');
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <section className="relative bg-[#FAF6EE] overflow-hidden border-b border-[#EADBCA]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16 lg:py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+    <section id="hero-section" className="relative bg-[#FAF6EE] overflow-hidden border-b border-[#EADBCA]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 lg:py-24">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
           
-          {/* Left Column: Editorial Headline & Copy */}
-          <div className="lg:col-span-6 z-10 text-center lg:text-left">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#EADBCA]/60 border border-[#D4B16A]/50 text-[#702C38] text-xs font-semibold uppercase tracking-wider mb-5">
+          {/* Left Column: Editorial Headline & Copy matching Chenetha Sarees */}
+          <div className="lg:col-span-7 z-10 text-center lg:text-left">
+            
+            {/* The Wedding Edit · 2026 Pill */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EADBCA]/70 border border-[#D4B16A]/60 text-[#702C38] text-[11px] sm:text-xs font-semibold uppercase tracking-[0.2em] mb-6 shadow-2xs">
               <Sparkles className="w-3.5 h-3.5 text-[#D4B16A]" />
-              <span>Authentic Indian Ethnic Wear</span>
+              <span>The Wedding Edit · 2026</span>
             </div>
 
-            <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-[#282522] font-normal tracking-tight leading-[1.15] mb-5">
-              Traditions for <br />
-              <span className="italic font-normal text-[#702C38]">Every Celebration.</span>
+            {/* Main Editorial Headline */}
+            <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-[#282522] font-normal tracking-tight leading-[1.12] mb-6">
+              Timeless handloom sarees, <br className="hidden sm:inline" />
+              <span className="italic font-normal text-[#702C38]">chosen for the moments</span> <br className="hidden sm:inline" />
+              you'll remember forever.
             </h1>
 
-            <p className="text-[#74685E] text-base sm:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 mb-8 font-normal">
-              Discover traditional styles for every generation, every occasion, and every special moment. Curated sarees, kurtas, and festive ensembles made to feel welcoming and affordable.
+            {/* Editorial Description */}
+            <p className="text-[#74685E] text-base sm:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0 mb-8 font-light">
+              Crafted slowly by India's master weaving communities. Pure Kanchi Pattu, heirloom Banarasi brocades, and luminous zari silks tailored for auspicious weddings, sacred rituals, and joyful family celebrations.
             </p>
 
+            {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4">
               <button
                 onClick={handleShopCollections}
-                className="w-full sm:w-auto px-8 py-3.5 bg-[#702C38] hover:bg-[#561E28] text-white text-sm font-semibold tracking-wide rounded-md transition-all shadow-md flex items-center justify-center gap-2 group"
+                className="w-full sm:w-auto px-8 py-4 bg-[#702C38] hover:bg-[#561E28] text-white text-xs sm:text-sm font-semibold uppercase tracking-[0.16em] rounded-md transition-all shadow-md flex items-center justify-center gap-2 group cursor-pointer"
               >
-                <span>Shop Collections</span>
+                <span>Explore the Collection</span>
                 <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
               </button>
 
-              <button
-                onClick={handleExploreNewArrivals}
-                className="w-full sm:w-auto px-7 py-3.5 bg-transparent hover:bg-[#EADBCA]/40 text-[#702C38] border border-[#702C38] text-sm font-semibold tracking-wide rounded-md transition-all"
+              <a
+                href="https://wa.me/918639778188?text=Hello%20BVS%20Fashions!%20I%20would%20like%20to%20request%20a%20personal%20WhatsApp%20consultation%20for%20sarees%20and%20wedding%20wear."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full sm:w-auto px-7 py-4 bg-white hover:bg-[#FAF6EE] text-[#702C38] border border-[#EADBCA] hover:border-[#702C38] text-xs sm:text-sm font-semibold uppercase tracking-[0.16em] rounded-md transition-all shadow-2xs flex items-center justify-center gap-2"
               >
-                Explore New Arrivals
-              </button>
+                <MessageCircle className="w-4 h-4 text-[#25D366] fill-[#25D366]" />
+                <span>WhatsApp Consultation</span>
+              </a>
             </div>
 
-            {/* Trust points for Indian family shoppers */}
-            <div className="mt-8 sm:mt-10 pt-5 sm:pt-6 border-t border-[#EADBCA] grid grid-cols-3 gap-2 sm:gap-4 text-center lg:text-left">
+            {/* Trust points & craft provenance */}
+            <div className="mt-10 pt-8 border-t border-[#EADBCA] grid grid-cols-3 gap-3 sm:gap-6 text-center lg:text-left">
               <div>
-                <p className="font-serif text-sm sm:text-lg font-bold text-[#702C38]">3 Generations</p>
-                <p className="text-[10px] sm:text-xs text-[#74685E] mt-0.5">Kids, Men & Women</p>
+                <p className="font-serif text-base sm:text-xl font-bold text-[#702C38]">Pure Weaves</p>
+                <p className="text-[10px] sm:text-xs text-[#74685E] mt-0.5 tracking-wide">Certified Silk & Zari</p>
               </div>
               <div>
-                <p className="font-serif text-sm sm:text-lg font-bold text-[#702C38]">Handpicked</p>
-                <p className="text-[10px] sm:text-xs text-[#74685E] mt-0.5">Authentic Weaves</p>
+                <p className="font-serif text-base sm:text-xl font-bold text-[#702C38]">From the Loom</p>
+                <p className="text-[10px] sm:text-xs text-[#74685E] mt-0.5 tracking-wide">Master Weaver Craft</p>
               </div>
               <div>
-                <p className="font-serif text-sm sm:text-lg font-bold text-[#702C38]">Honest Value</p>
-                <p className="text-[10px] sm:text-xs text-[#74685E] mt-0.5">Festive Pricing</p>
+                <p className="font-serif text-base sm:text-xl font-bold text-[#702C38]">Honest Value</p>
+                <p className="text-[10px] sm:text-xs text-[#74685E] mt-0.5 tracking-wide">Direct Family Pricing</p>
               </div>
             </div>
+
           </div>
 
-          {/* Right Column: Visual Composition with Ethnic Fashion Photography */}
-          <div className="lg:col-span-6 relative">
-            <div className="relative mx-auto max-w-md lg:max-w-none">
+          {/* Right Column: Visual Composition with High-Fashion Saree Photography */}
+          <div className="lg:col-span-5 relative">
+            <div className="relative mx-auto max-w-sm sm:max-w-md lg:max-w-none">
               
               {/* Main Editorial Hero Image */}
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white aspect-[4/5] sm:aspect-[4/5] bg-[#EADBCA]/30">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white aspect-[3/4] bg-[#EADBCA]/30">
                 <img
                   src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=85"
-                  alt="Indian traditional saree and ethnic clothing for festive celebrations"
-                  className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700 ease-out"
+                  alt="Traditional Indian crimson Kanchi pattu saree with gold zari border"
+                  className="w-full h-full object-cover object-top hover:scale-104 transition-transform duration-700 ease-out"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#282522]/60 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#282522]/75 via-black/10 to-transparent" />
                 
+                {/* Floating Image Label */}
                 <div className="absolute bottom-6 left-6 right-6 text-white">
-                  <span className="inline-block text-[11px] font-semibold tracking-widest uppercase bg-[#D4B16A] text-[#282522] px-2.5 py-0.5 rounded mb-2">
-                    Festive 2026 Collection
+                  <span className="inline-block text-[10px] font-semibold tracking-[0.2em] uppercase bg-[#D4B16A] text-[#282522] px-2.5 py-1 rounded mb-2 shadow-xs">
+                    Temple Heritage Weave
                   </span>
                   <p className="font-serif text-xl sm:text-2xl font-medium leading-snug">
-                    Banarasi, Kanjeevaram & Family Celebration Attire
+                    Aruna Crimson Kanchi Pattu
+                  </p>
+                  <p className="text-xs text-white/80 font-light mt-1">
+                    Handwoven with pure gold weft border · ₹4,999
                   </p>
                 </div>
               </div>
 
-              {/* Inset Complementary Card showing Family / Men's / Kids ethnic wear */}
-              <div className="hidden sm:flex absolute -bottom-6 -left-8 bg-white/95 backdrop-blur-md p-3.5 rounded-xl border border-[#EADBCA] shadow-xl items-center gap-3.5 max-w-xs">
-                <img
-                  src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=200&q=80"
-                  alt="Men's Kurta & Traditional Attire"
-                  className="w-14 h-16 object-cover rounded-lg border border-[#EADBCA]"
-                />
+              {/* Floating Craft Badge (Bottom-Left) */}
+              <div className="hidden sm:flex absolute -bottom-5 -left-6 bg-white/95 backdrop-blur-md p-3.5 rounded-xl border border-[#EADBCA] shadow-xl items-center gap-3 max-w-xs animate-fade-in">
+                <div className="w-10 h-10 rounded-full bg-[#FAF6EE] border border-[#D4B16A] flex items-center justify-center text-[#702C38] shrink-0">
+                  <Sparkles className="w-5 h-5 text-[#D4B16A]" />
+                </div>
                 <div>
-                  <span className="text-[10px] uppercase font-bold text-[#702C38] tracking-wider">
-                    Family Matching Sets
-                  </span>
-                  <p className="text-xs font-semibold text-[#282522] leading-tight mt-0.5">
-                    Coordinated Festive Colors for Weddings & Pujas
-                  </p>
-                  <p className="text-[11px] text-[#74685E] mt-1">Starting from ₹1,399</p>
+                  <p className="text-xs font-bold text-[#282522] font-serif">Made Slowly. Loved for Generations.</p>
+                  <p className="text-[10px] text-[#74685E]">Woven on traditional Indian handlooms</p>
                 </div>
               </div>
 
-              {/* Decorative Subtle Gold Accent Frame */}
-              <div className="absolute -top-3 -right-3 w-32 h-32 border-2 border-[#D4B16A]/40 rounded-2xl -z-10 hidden sm:block" />
             </div>
           </div>
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { useShop } from '../context/ShopContext';
 import { CATEGORIES } from '../data/products';
 import type { CategoryId } from '../types';
-import { X, Heart, ShoppingBag, User, Sparkles, ChevronRight } from 'lucide-react';
+import { X, Heart, ShoppingBag, User, Sparkles, ChevronRight, MessageCircle, Lock } from 'lucide-react';
 
 export const MobileMenu: React.FC = () => {
   const {
@@ -16,6 +16,7 @@ export const MobileMenu: React.FC = () => {
     setIsWishlistOpen,
     setIsCartOpen,
     setIsAccountModalOpen,
+    setViewMode,
   } = useShop();
 
   if (!isMobileMenuOpen) return null;
@@ -31,7 +32,7 @@ export const MobileMenu: React.FC = () => {
   return (
     <div className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-xs flex animate-fade-in lg:hidden">
       <div 
-        className="w-4/5 max-w-sm bg-white h-full shadow-2xl flex flex-col justify-between border-r border-[#EADBCA]"
+        className="w-4/5 max-w-sm bg-white h-full shadow-2xl flex flex-col justify-between border-r border-[#EADBCA] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header */}
@@ -88,10 +89,23 @@ export const MobileMenu: React.FC = () => {
             </button>
           </div>
 
+          {/* Direct WhatsApp Callout in mobile drawer */}
+          <div className="p-4 border-b border-[#EADBCA] bg-[#25D366]/5">
+            <a
+              href="https://wa.me/918639778188?text=Hello%20BVS%20Fashions!%20I%20would%20like%20to%20order%20from%20your%20collection."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 py-2.5 px-4 bg-[#25D366] text-white rounded-lg text-xs font-bold uppercase tracking-wider shadow-2xs"
+            >
+              <MessageCircle className="w-4 h-4 fill-white" />
+              <span>Order on WhatsApp</span>
+            </a>
+          </div>
+
           {/* Navigation Category List */}
           <div className="p-4">
             <p className="text-[11px] font-bold uppercase tracking-widest text-[#74685E] px-3 mb-2">
-              Browse Categories
+              The Saree Wardrobe & Collections
             </p>
             <ul className="space-y-1">
               {CATEGORIES.map((cat) => {
@@ -100,14 +114,14 @@ export const MobileMenu: React.FC = () => {
                   <li key={cat.id}>
                     <button
                       onClick={() => handleSelectCategory(cat.id as CategoryId)}
-                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors ${
+                      className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer ${
                         isActive
                           ? 'bg-[#702C38] text-white'
                           : 'text-[#282522] hover:bg-[#FAF6EE] hover:text-[#702C38]'
                       }`}
                     >
                       <span className="flex items-center gap-2">
-                        {cat.id === 'festive-wedding' && <Sparkles className="w-3.5 h-3.5 text-[#D4B16A]" />}
+                        {cat.id === 'sarees' && <Sparkles className="w-3.5 h-3.5 text-[#D4B16A]" />}
                         {cat.label}
                       </span>
                       <ChevronRight className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-[#74685E]'}`} />
@@ -120,13 +134,26 @@ export const MobileMenu: React.FC = () => {
         </div>
 
         {/* Bottom Banner */}
-        <div className="p-5 border-t border-[#EADBCA] bg-[#FAF6EE]">
-          <p className="text-xs font-serif font-bold text-[#702C38] mb-1">
-            Traditions for Every Celebration
-          </p>
-          <p className="text-[11px] text-[#74685E] leading-relaxed">
-            Accessible family ethnic wear crafted for weddings, festivals, and joyous family occasions.
-          </p>
+        <div className="p-5 border-t border-[#EADBCA] bg-[#FAF6EE] flex items-center justify-between">
+          <div>
+            <p className="text-xs font-serif font-bold text-[#702C38] mb-0.5">
+              The Wedding Edit · 2026
+            </p>
+            <p className="text-[10px] text-[#74685E]">
+              Authentic handlooms for the whole family
+            </p>
+          </div>
+
+          <button
+            onClick={() => {
+              setIsMobileMenuOpen(false);
+              setViewMode('admin');
+            }}
+            className="flex items-center gap-1 text-[11px] text-[#702C38] hover:underline font-semibold"
+          >
+            <Lock className="w-3 h-3" />
+            <span>Admin</span>
+          </button>
         </div>
       </div>
     </div>
